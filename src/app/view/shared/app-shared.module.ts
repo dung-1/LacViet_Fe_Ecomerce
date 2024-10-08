@@ -21,4 +21,4 @@ import { BrowserModule } from '@angular/platform-browser';
     SidebarComponent
   ]
 })
-export class AppharedModule { }
+export class AppsharedModule { }

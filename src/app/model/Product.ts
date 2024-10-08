@@ -2,6 +2,6 @@ export interface Product {
     Id: number;
     name: string;
     price: number;
-    imagestring;
+    image:string;
     categoryId:number;
   }
