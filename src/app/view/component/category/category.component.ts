@@ -17,7 +17,6 @@ export class CategoryComponent implements OnInit {
   constructor(private apiService: ApiService,
     private notificationService: NotificationService,
     private fb: FormBuilder
-
   ) {
 
     this.addCategoryForm = this.fb.group({
@@ -27,16 +26,13 @@ export class CategoryComponent implements OnInit {
       id: ['', Validators.required],
       name: ['', Validators.required],
     });
-
   }
   offset = 0;
   filteredCategories: Category[] = [];
   contact: Category[] = [
     { id: 1, name: '' },
   ];
-
   currentCategoryId: number | null = null;
-
   addCategoryForm: FormGroup;
   editCategoryForm: FormGroup;
   columns = [
@@ -46,6 +42,7 @@ export class CategoryComponent implements OnInit {
   ngOnInit(): void {
     this.loadcontacts();
   }
+
   loadcontacts() {
     this.apiService.get(ConstService.getAllCategory).subscribe(
       (response) => {
@@ -58,9 +55,11 @@ export class CategoryComponent implements OnInit {
       }
     );
   }
+
   rowClassFunction = (row: any, index: number) => {
     return index % 2 === 0 ? 'datatable-row-even' : 'datatable-row-odd';
-  };
+  }
+
   onPage(event: any) {
     this.offset = event.offset;
   }
@@ -70,7 +69,7 @@ export class CategoryComponent implements OnInit {
       const formValue = this.editCategoryForm.value;
       const categoryData: Partial<Category> = {
         name: formValue.name,
-        id:formValue.id,
+        id: formValue.id,
       };
 
       this.apiService.put(`${ConstService.updateCategory}/${this.currentCategoryId}`, categoryData).subscribe(
@@ -89,12 +88,12 @@ export class CategoryComponent implements OnInit {
   }
 
   openEditModal(category: Category) {
-      this.currentCategoryId = category.id;
-      this.editCategoryForm.patchValue({
-        id: category.id,
-        name: category.name,
+    this.currentCategoryId = category.id;
+    this.editCategoryForm.patchValue({
+      id: category.id,
+      name: category.name,
 
-      });
+    });
   }
 
   addCategory() {

@@ -13,42 +13,39 @@ import { Product } from '../../../model/Product';
   templateUrl: './product.component.html',
   styleUrl: './product.component.css'
 })
-export class ProductComponent implements OnInit {
 
-  constructor(private apiService: ApiService,
+export class ProductComponent implements OnInit {
+  constructor(
+    private apiService: ApiService,
     private notificationService: NotificationService,
     private fb: FormBuilder
-
   ) {
-
     this.addProductForm = this.fb.group({
       name: ['', Validators.required],
       price: [0, Validators.required],
-      // imageFile:['', Validators.required],
       categoryId: ['', Validators.required],
+      image: [''],
     });
+
     this.editProductForm = this.fb.group({
       id: ['', Validators.required],
       name: ['', Validators.required],
       price: [0, Validators.required],
-      // imageFile:['', Validators.required],
       categoryId: ['', Validators.required],
+      image: [''],
     });
   }
-
+  addProductForm!: FormGroup;
+  selectedFile!: File | null;
   categories = [{ id: 1, name: 'Category 1' }];
-  selectedFile: File | null = null;
-
   offset = 0;
   filteredCategories: Product[] = [];
   Product: Product[] = [
-    { Id: 1, name: '',price:1,image:'',categoryId:1 },
+    { id: 1, name: '', price: 1, image: '', categoryId: 1 },
   ];
-  baseUrl: string = 'https://localhost:7074';
-
+  baseUrl: string = 'http://192.168.1.20:7074';
+  editMode = false;
   currentProductId: number | null = null;
-
-  addProductForm: FormGroup;
   editProductForm: FormGroup;
   columns = [
     { prop: 'id', name: 'ID sản phẩm' },
@@ -71,6 +68,7 @@ export class ProductComponent implements OnInit {
       }
     );
   }
+
   loadProducts() {
     this.apiService.get(ConstService.getAllProduct).subscribe(
       (response) => {
@@ -83,6 +81,7 @@ export class ProductComponent implements OnInit {
       }
     );
   }
+
   rowClassFunction = (row: any, index: number) => {
     return index % 2 === 0 ? 'datatable-row-even' : 'datatable-row-odd';
   };
@@ -90,38 +89,53 @@ export class ProductComponent implements OnInit {
     this.offset = event.offset;
   }
 
-  updateProduct() {
-    if (this.editProductForm.valid && this.currentProductId) {
-      const formValue = this.editProductForm.value;
-      const ProductData: Partial<Product> = {
-        name: formValue.name,
-        Id:formValue.id,
-      };
+ updateProduct() {
+  if (this.editProductForm.valid && this.currentProductId) {
+    const formValue = this.editProductForm.value;
+    const productData: Partial<Product> = {
+      id:formValue.id,
+      name: formValue.name,
+      price: formValue.price,
+      categoryId: +formValue.categoryId,
+      image: formValue.image 
+    };
 
-      this.apiService.put(`${ConstService.updateProduct}/${this.currentProductId}`, ProductData).subscribe(
-        (response: Product) => {
-          this.notificationService.success('Chỉnh sửa thể loại thành công.');
-          this.loadProducts();
-          this.editProductForm.reset();
-          const modalCloseButton = document.querySelector('#exampleModaledit .btn-close') as HTMLElement;
-          modalCloseButton?.click();
-        },
-        (error) => {
-          this.notificationService.error('Có lỗi xảy ra khi chỉnh sửa thể loại.');
-        }
-      );
+    const formData = new FormData();
+    formData.append('id', productData.id!.toString());
+    formData.append('name', productData.name as string);
+    formData.append('price', productData.price!.toString());
+    formData.append('categoryId', productData.categoryId!.toString());
+    formData.append('image', productData.image as string);
+
+    if (this.selectedFile) {
+      formData.append('imageFile', this.selectedFile);
     }
+
+    this.apiService.putFormData(`${ConstService.updateProduct}/${this.currentProductId}`, formData).subscribe(
+      () => {
+        this.notificationService.success('Chỉnh sửa sản phẩm thành công.');
+        this.loadProducts();
+        this.editProductForm.reset();
+        this.selectedFile = null; 
+        const modalCloseButton = document.querySelector('#exampleModaledit .btn-close') as HTMLElement;
+        modalCloseButton?.click();
+      },
+      () => {
+        this.notificationService.error('Có lỗi xảy ra khi chỉnh sửa sản phẩm.');
+      }
+    );
   }
+}
 
-  openEditModal(Product: Product) {
-      this.currentProductId = Product.Id;
-      this.editProductForm.patchValue({
-        id: Product.Id,
-        name: Product.name,
-        price:Product.price,
-        categoryId:Product.categoryId
-
-      });
+  openEditModal(product: Product) {
+    this.currentProductId = product.id;
+    this.editProductForm.patchValue({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      categoryId: product.categoryId,
+      image: product.image,
+    });
   }
 
   addProduct() {
@@ -130,43 +144,36 @@ export class ProductComponent implements OnInit {
       productData.categoryId = +productData.categoryId;
 
       const formData = new FormData();
-      formData.append(
-        'product',
-        new Blob([JSON.stringify(productData)], { type: 'application/json' })
-      );
+      formData.append('name', productData.name);
+      formData.append('price', productData.price.toString());
+      formData.append('categoryId', productData.categoryId.toString());
+      formData.append('image', productData.image);
 
       if (this.selectedFile) {
-        formData.append('file', this.selectedFile, this.selectedFile.name);
+        formData.append('imageFile', this.selectedFile);
       }
 
       this.apiService.postFormData(ConstService.addProduct, formData).subscribe(
-        (response) => {
+        () => {
           this.notificationService.success('Thêm sản phẩm thành công.');
           this.loadProducts();
           this.addProductForm.reset();
-          const modalCloseButton = document.querySelector(
-            '#exampleModaladd .btn-close'
-          ) as HTMLElement;
+          this.selectedFile = null; 
+          const modalCloseButton = document.querySelector('#exampleModaladd .btn-close') as HTMLElement;
           modalCloseButton?.click();
         },
-        (error) => {
+        () => {
           this.notificationService.error('Có lỗi xảy ra khi thêm sản phẩm.');
         }
       );
-    } else {
-      Object.keys(this.addProductForm.controls).forEach((key) => {
-        const control = this.addProductForm.get(key);
-        if (control) {
-          control.markAsTouched();
-        }
-      });
     }
   }
-  
+
   getFullImageUrl(imageUrl: string): string {
     if (!imageUrl) return '';
-    return `${this.baseUrl}/${imageUrl}`;
+    return `${ConstService.serverHost()}/${imageUrl}`;
   }
+
   deleteProduct(ProductId: number) {
     Swal.fire({
       title: 'Bạn có chắc chắn muốn xóa?',
@@ -190,6 +197,7 @@ export class ProductComponent implements OnInit {
       }
     });
   }
+
   getCategoryName(categoryId: number): string {
     const category = this.categories.find((c) => c.id === categoryId);
     return category ? category.name : 'Unknown';
@@ -199,6 +207,8 @@ export class ProductComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
+      this.addProductForm.patchValue({ image: file.name });
+      this.editProductForm.patchValue({ image: file.name }); 
     }
   }
 }

@@ -7,9 +7,11 @@ import { environment as env } from '../../environments/environment.development';
   providedIn: 'root',
 })
 export class ConstService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
   public static serverHost(): string {
-    return isDevMode() ? 'https://localhost:7074' : '';
+    // return isDevMode() ? 'http://192.168.1.20': '';
+        return isDevMode() ? 'http://192.168.1.20:7074': '';
+    // return isDevMode() ? 'https://localhost:7074' : '';
   }
 
   public static readonly FREQUENCY = {};
