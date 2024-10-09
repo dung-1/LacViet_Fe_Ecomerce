@@ -4,8 +4,6 @@
     </a>
 </header>
 
-
-
 <div class="modal fade" id="exampleModaladd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -32,8 +30,6 @@
         </div>
     </div>
 </div>
-
-
 
 <div class="modal fade" id="exampleModaledit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -62,7 +58,6 @@
   </div>
   
 
-
 <div class="page-heading">
     <div class="page-title">
         <div class="row">
@@ -88,7 +83,8 @@
                             </div>
                             <ngx-datatable class="material" [rows]="filteredCategories" [columnMode]="'force'"
                                 [headerHeight]="50" [footerHeight]="50" [columns]="columns" [rowHeight]="'auto'"
-                                [rowClass]="rowClassFunction" [limit]="5" [count]="filteredCategories.length"
+                                [rowClass]="rowClassFunction" 
+                                [limit]="5" [count]="filteredCategories.length"
                                 [offset]="offset" (page)='onPage($event)'>
                                 <ngx-datatable-column name="ID loại sản phẩm">
                                     <ng-template let-row="row" ngx-datatable-cell-template>
@@ -105,7 +101,7 @@
                                         <button class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#exampleModaledit" data-bs-whatever="@mdo"
                                             (click)="openEditModal(row)">
-                                            <i class="bi bi-pencil-square"></i>sửa
+                                            <i class="bi bi-pencil-square"></i> Sửa
                                         </button>
                                     </ng-template>
                                 </ngx-datatable-column>
@@ -123,6 +119,4 @@
             </div>
         </div>
     </section>
-    <!-- Hoverable rows end -->
-
 </div>

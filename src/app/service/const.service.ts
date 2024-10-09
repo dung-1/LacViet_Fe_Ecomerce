@@ -11,7 +11,6 @@ export class ConstService {
   public static serverHost(): string {
     // return isDevMode() ? 'http://192.168.1.20': '';
         return isDevMode() ? 'http://192.168.1.20:7074': '';
-    // return isDevMode() ? 'https://localhost:7074' : '';
   }
 
   public static readonly FREQUENCY = {};

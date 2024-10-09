@@ -23,15 +23,15 @@
                         <input id="addPrice" formControlName="price" name="price" type="number" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label for="addImageFile">Hình ảnh sản phẩm</label>
-                        <input type="file" (change)="onFileChange($event)" id="addImageFile" name="addImageFile"
+                        <label for="addimageFile">Hình ảnh sản phẩm</label>
+                        <input type="file" (change)="onFileChange($event)" id="imageFile" name="imageFile"
                             class="form-control" />
                     </div>
                     <div class="form-group">
                         <label for="addCategoryId">Danh mục</label>
                         <select id="addCategoryId" name="categoryId" formControlName="categoryId" class="form-control">
                             <option value="" disabled>---Chọn loại sản phẩm---</option>
-                            <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}
+                            <option *ngFor="let category of Product" [value]="category.id">{{ category.name }}
                             </option>
                         </select>
                     </div>
@@ -65,19 +65,19 @@
                         <input id="editPrice" formControlName="price" name="price" type="number" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label for="editImageFile">Hình ảnh sản phẩm</label>
-                        <input type="file" (change)="onFileChange($event)" id="editImageFile" name="editImageFile"
+                        <label for="editimageFile">Hình ảnh sản phẩm</label>
+                        <input type="file" (change)="onFileChange($event)" id="imageFile" name="imageFile"
                             class="form-control" />
                     </div>
-                    <div class="form-group" *ngIf="editProductForm.get('imageUrlPath')?.value">
-                        <img [src]="editProductForm.get('imageUrlPath')?.value" alt="Current product image"
+                    <!-- <div class="form-group" *ngIf="editProductForm.get('image')?.value">
+                        <img [src]="editProductForm.get('image')?.value" alt="Current product image"
                             class="img-thumbnail" />
-                    </div>
+                    </div> -->
                     <div class="form-group">
                         <label for="editCategoryId">Danh mục</label>
                         <select id="editCategoryId" name="editCategoryId" formControlName="categoryId"
                             class="form-control">
-                            <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}
+                            <option *ngFor="let category of Product" [value]="category.id">{{ category.name }}
                             </option>
                         </select>
                     </div>
@@ -115,9 +115,9 @@
                         <div class="card-body">
                             <div class="row mb-3 search-input">
                             </div>
-                            <ngx-datatable class="material" [rows]="filteredCategories" [columnMode]="'force'"
+                            <ngx-datatable class="material" [rows]="filteredProduct" [columnMode]="'force'"
                                 [headerHeight]="50" [footerHeight]="50" [columns]="columns" [rowHeight]="'auto'"
-                                [rowClass]="rowClassFunction" [limit]="5" [count]="filteredCategories.length"
+                                [rowClass]="rowClassFunction" [limit]="5" [count]="filteredProduct.length"
                                 [offset]="offset" (page)='onPage($event)'>
                                 <ngx-datatable-column name="ID sản phẩm">
                                     <ng-template let-row="row" ngx-datatable-cell-template>
@@ -154,7 +154,7 @@
                                         <button class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#exampleModaledit" data-bs-whatever="@mdo"
                                             (click)="openEditModal(row)">
-                                            <i class="bi bi-pencil-square"></i>sửa
+                                            <i class="bi bi-pencil-square"></i> Sửa
                                         </button>
                                     </ng-template>
                                 </ngx-datatable-column>

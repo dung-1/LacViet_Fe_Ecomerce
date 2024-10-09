@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
 import { Category } from '../../../model/Category';
 import { ApiService } from '../../../service/Api/api.service';
 import { NotificationService } from '../../../service/Notification/notification.service';
 import { ConstService } from '../../../service/const.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import Swal from 'sweetalert2';
-import { id } from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-category',
@@ -136,7 +135,8 @@ export class CategoryComponent implements OnInit {
             this.loadcontacts();
           },
           (error) => {
-            this.notificationService.error('Có lỗi xảy ra khi xóa thể loại.');
+            this.notificationService.error('Không thể xóa thể loại này.');
+
           }
         );
       }
