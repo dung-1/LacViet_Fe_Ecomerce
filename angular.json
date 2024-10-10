@@ -33,13 +33,33 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*.svg",
+                "input": "node_modules/ionicons/dist/ionicons/svg",
+                "output": "./svg"
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "src/assets/template/css/bootstrap.css",
+              "src/assets/template/vendors/iconly/bold.css",
+              "src/assets/template/vendors/perfect-scrollbar/perfect-scrollbar.css",
+              "src/assets/template/vendors/bootstrap-icons/bootstrap-icons.css",
+              "src/assets/template/css/app.css",
+              "node_modules/@swimlane/ngx-datatable/themes/material.css",
+              "node_modules/@swimlane/ngx-datatable/themes/dark.css",
+              "node_modules/@swimlane/ngx-datatable/themes/bootstrap.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "src/assets/template/vendors/perfect-scrollbar/perfect-scrollbar.min.js",
+              "src/assets/template/js/bootstrap.bundle.min.js",
+              "src/assets/template/vendors/apexcharts/apexcharts.js",
+              "src/assets/template/js/pages/dashboard.js",
+              "src/assets/template/js/main.js"
+            ],
             "server": "src/main.server.ts",
             "prerender": true,
             "ssr": {
@@ -52,7 +72,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -65,7 +85,13 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
