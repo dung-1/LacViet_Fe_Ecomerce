@@ -55,9 +55,6 @@ export class CategoryComponent implements OnInit {
     );
   }
 
-  rowClassFunction = (row: any, index: number) => {
-    return index % 2 === 0 ? 'datatable-row-even' : 'datatable-row-odd';
-  }
 
   onPage(event: any) {
     this.offset = event.offset;
@@ -70,7 +67,6 @@ export class CategoryComponent implements OnInit {
         name: formValue.name,
         id: formValue.id,
       };
-
       this.apiService.put(`${ConstService.updateCategory}/${this.currentCategoryId}`, categoryData).subscribe(
         (response: Category) => {
           this.notificationService.success('Chỉnh sửa thể loại thành công.');

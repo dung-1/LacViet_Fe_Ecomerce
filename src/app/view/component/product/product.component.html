@@ -1,175 +1,277 @@
 <header class="mb-3">
-    <a href="#" class="burger-btn d-block d-xl-none">
-        <i class="bi bi-justify fs-3"></i>
-    </a>
+  <a href="#" class="burger-btn d-block d-xl-none">
+    <i class="bi bi-justify fs-3"></i>
+  </a>
 </header>
 
 <!-- Modal Thêm Sản Phẩm -->
-<div class="modal fade" id="exampleModaladd" tabindex="-1" aria-labelledby="exampleModalLabelAdd" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabelAdd">Thêm sản phẩm</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form [formGroup]="addProductForm">
-                    <div class="mb-3">
-                        <label for="addProductName" class="col-form-label">Tên sản phẩm:</label>
-                        <input type="text" class="form-control" id="addProductName" formControlName="name" />
-                    </div>
-                    <div class="form-group">
-                        <label for="addPrice">Giá sản phẩm</label>
-                        <input id="addPrice" formControlName="price" name="price" type="number" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="addimageFile">Hình ảnh sản phẩm</label>
-                        <input type="file" (change)="onFileChange($event)" id="imageFile" name="imageFile"
-                            class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="addCategoryId">Danh mục</label>
-                        <select id="addCategoryId" name="categoryId" formControlName="categoryId" class="form-control">
-                            <option value="" disabled>---Chọn loại sản phẩm---</option>
-                            <option *ngFor="let category of Product" [value]="category.id">{{ category.name }}
-                            </option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary" (click)="addProduct()">Thêm sản phẩm</button>
-            </div>
-        </div>
+<div
+  class="modal fade"
+  id="exampleModaladd"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabelAdd"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabelAdd">
+          Thêm sản phẩm
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addProductForm">
+          <div class="mb-3">
+            <label for="addProductName" class="col-form-label"
+              >Tên sản phẩm:</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="addProductName"
+              formControlName="name"
+            />
+          </div>
+          <div class="form-group">
+            <label for="addPrice">Giá sản phẩm</label>
+            <input
+              id="addPrice"
+              formControlName="price"
+              name="price"
+              type="number"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label for="addimageFile">Hình ảnh sản phẩm</label>
+            <input
+              type="file"
+              (change)="onFileChange($event)"
+              id="imageFile"
+              name="imageFile"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label for="addCategoryId">Danh mục</label>
+            <select
+              id="addCategoryId"
+              name="categoryId"
+              formControlName="categoryId"
+              class="form-control"
+            >
+              <option value="" disabled>---Chọn loại sản phẩm---</option>
+              <option *ngFor="let category of categories" [value]="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Đóng
+        </button>
+        <button type="button" class="btn btn-primary" (click)="addProduct()">
+          Thêm sản phẩm
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Modal Sửa Sản Phẩm -->
-<div class="modal fade" id="exampleModaledit" tabindex="-1" aria-labelledby="exampleModalLabelEdit" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabelEdit">Chỉnh sửa sản phẩm</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form [formGroup]="editProductForm">
-                    <input type="hidden" class="form-control" formControlName="id" />
-                    <div class="mb-3">
-                        <label for="editProductName" class="col-form-label">Tên sản phẩm:</label>
-                        <input type="text" class="form-control" id="editProductName" formControlName="name" />
-                    </div>
-                    <div class="form-group">
-                        <label for="editPrice">Giá sản phẩm</label>
-                        <input id="editPrice" formControlName="price" name="price" type="number" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="editimageFile">Hình ảnh sản phẩm</label>
-                        <input type="file" (change)="onFileChange($event)" id="imageFile" name="imageFile"
-                            class="form-control" />
-                    </div>
-                    <!-- <div class="form-group" *ngIf="editProductForm.get('image')?.value">
+<div
+  class="modal fade"
+  id="exampleModaledit"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabelEdit"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabelEdit">
+          Chỉnh sửa sản phẩm
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="editProductForm" >
+          <input type="hidden" class="form-control" formControlName="id" />
+          <div class="mb-3">
+            <label for="editProductName" class="col-form-label"
+              >Tên sản phẩm:</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="editProductName"
+              formControlName="name"
+            />
+          </div>
+          <div class="form-group">
+            <label for="editPrice">Giá sản phẩm</label>
+            <input
+              id="editPrice"
+              formControlName="price"
+              name="price"
+              type="number"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label for="editimageFile">Hình ảnh sản phẩm</label>
+            <input
+              type="file"
+              (change)="onFileChange($event)"
+              id="imageFile"
+              name="imageFile"
+              class="form-control"
+            />
+          </div>
+          <!-- <div class="form-group" *ngIf="editProductForm.get('image')?.value">
                         <img [src]="editProductForm.get('image')?.value" alt="Current product image"
                             class="img-thumbnail" />
                     </div> -->
-                    <div class="form-group">
-                        <label for="editCategoryId">Danh mục</label>
-                        <select id="editCategoryId" name="editCategoryId" formControlName="categoryId"
-                            class="form-control">
-                            <option *ngFor="let category of Product" [value]="category.id">{{ category.name }}
-                            </option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary" (click)="updateProduct()">Chỉnh sửa sản phẩm</button>
-            </div>
-        </div>
+          <div class="form-group">
+            <label for="editCategoryId">Danh mục</label>
+            <select
+              id="editCategoryId"
+              name="editCategoryId"
+              formControlName="categoryId"
+              class="form-control"
+            >
+              <option *ngFor="let category of categories" [value]="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Đóng
+        </button>
+        <button type="button" class="btn btn-primary" (click)="updateProduct()">
+          Chỉnh sửa sản phẩm
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 
-
 <div class="page-heading">
-    <div class="page-title">
-        <div class="row">
-            <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Quản lý sản phẩm</h3>
-            </div>
-        </div>
+  <div class="page-title">
+    <div class="row">
+      <div class="col-12 col-md-6 order-md-1 order-last">
+        <h3>Quản lý sản phẩm</h3>
+      </div>
     </div>
+  </div>
 
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModaladd"
-        data-bs-whatever="@mdo">
-        <i class="bi bi-plus"></i> Thêm sản phẩm
-    </button>
+  <button
+    type="button"
+    class="btn btn-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#exampleModaladd"
+    data-bs-whatever="@mdo"
+  >
+    <i class="bi bi-plus"></i> Thêm sản phẩm
+  </button>
 
-    <!-- Hoverable rows start -->
-    <section class="section">
-        <div class="row" id="table-hover-row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-content">
-                        <div class="card-body">
-                            <div class="row mb-3 search-input">
-                            </div>
-                            <ngx-datatable class="material" [rows]="filteredProduct" [columnMode]="'force'"
-                                [headerHeight]="50" [footerHeight]="50" [columns]="columns" [rowHeight]="'auto'"
-                                [rowClass]="rowClassFunction" [limit]="5" [count]="filteredProduct.length"
-                                [offset]="offset" (page)='onPage($event)'>
-                                <ngx-datatable-column name="ID sản phẩm">
-                                    <ng-template let-row="row" ngx-datatable-cell-template>
-                                        {{ row.id }}
-                                    </ng-template>
-                                </ngx-datatable-column>
-                                <ngx-datatable-column name="Tên sản phẩm ">
-                                    <ng-template let-row="row" ngx-datatable-cell-template>
-                                        {{ row.name }}
-                                    </ng-template>
-                                </ngx-datatable-column>
+  <!-- Hoverable rows start -->
+  <section class="section">
+    <div class="row" id="table-hover-row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="row mb-3 search-input"></div>
+              <ng-container *ngIf="filteredCategories.length > 0">
+                <ngx-datatable
+                  class="material"
+                  [rows]="filteredProduct"
+                  [columnMode]="'force'"
+                  [headerHeight]="50"
+                  [footerHeight]="50"
+                  [columns]="columns"
+                  [rowHeight]="'auto'"
+                  [limit]="5"
+                  [count]="filteredProduct.length"
+                  [offset]="offset"
+                  (page)="onPage($event)"
+                >
+                  <ngx-datatable-column name="ID sản phẩm">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.id }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Tên sản phẩm ">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.name }}
+                    </ng-template>
+                  </ngx-datatable-column>
 
-                                <ngx-datatable-column name="Gía sản phẩm ">
-                                    <ng-template let-row="row" ngx-datatable-cell-template>
-                                        {{ row.price | currency: "VND" }}
-                                    </ng-template>
-                                </ngx-datatable-column>
-
-                                <ngx-datatable-column name="ảnh sản phẩm ">
-                                    <ng-template let-row="row" ngx-datatable-cell-template>
-                                        <img [src]="getFullImageUrl(row.image)" alt="{{row.name}}"
-                                            style="width: 100px; height: auto;">
-                                    </ng-template>
-                                </ngx-datatable-column>
-
-                                <ngx-datatable-column name="Loại sản phẩm ">
-                                    <ng-template let-row="row" ngx-datatable-cell-template>
-                                        {{ getCategoryName(row.categoryId) }}
-                                    </ng-template>
-                                </ngx-datatable-column>
-
-                                <ngx-datatable-column name="Chỉnh sửa">
-                                    <ng-template ngx-datatable-cell-template let-row="row">
-                                        <button class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#exampleModaledit" data-bs-whatever="@mdo"
-                                            (click)="openEditModal(row)">
-                                            <i class="bi bi-pencil-square"></i> Sửa
-                                        </button>
-                                    </ng-template>
-                                </ngx-datatable-column>
-                                <ngx-datatable-column name="Xóa">
-                                    <ng-template ngx-datatable-cell-template let-row="row">
-                                        <button class="btn btn-danger" (click)="deleteProduct(row.id)">
-                                            <i class="bi bi-x"></i> Xóa
-                                        </button>
-                                    </ng-template>
-                                </ngx-datatable-column>
-                            </ngx-datatable>
-                        </div>
-                    </div>
-                </div>
+                  <ngx-datatable-column name="Gía sản phẩm ">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row.price | currency : "VND" }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="ảnh sản phẩm ">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <img
+                        [src]="getFullImageUrl(row.image)"
+                        alt="{{ row.name }}"
+                        style="width: 100px; height: auto"
+                      />
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Loại sản phẩm ">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ getCategoryName(row.categoryId) }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Chỉnh sửa">
+                    <ng-template ngx-datatable-cell-template let-row="row">
+                      <button
+                        class="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#exampleModaledit"
+                        data-bs-whatever="@mdo"
+                        (click)="openEditModal(row)"
+                      >
+                        <i class="bi bi-pencil-square"></i> Sửa
+                      </button>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Xóa">
+                    <ng-template ngx-datatable-cell-template let-row="row">
+                      <button
+                        class="btn btn-danger"
+                        (click)="deleteProduct(row.id)"
+                      >
+                        <i class="bi bi-x"></i> Xóa
+                      </button>
+                    </ng-template>
+                  </ngx-datatable-column>
+                </ngx-datatable>
+              </ng-container>
             </div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 </div>

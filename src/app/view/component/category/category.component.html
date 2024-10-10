@@ -40,9 +40,7 @@
         </div>
         <div class="modal-body">
           <form [formGroup]="editCategoryForm" *ngIf="this.editCategoryForm">
-            <!-- Input hidden để lưu trữ id -->
             <input type="hidden" class="form-control" formControlName="id" />
-  
             <div class="mb-3">
               <label for="recipient-name" class="col-form-label">Tên thể loại:</label>
               <input type="text" class="form-control" id="recipient-name" formControlName="name" />
@@ -83,7 +81,6 @@
                             </div>
                             <ngx-datatable class="material" [rows]="filteredCategories" [columnMode]="'force'"
                                 [headerHeight]="50" [footerHeight]="50" [columns]="columns" [rowHeight]="'auto'"
-                                [rowClass]="rowClassFunction" 
                                 [limit]="5" [count]="filteredCategories.length"
                                 [offset]="offset" (page)='onPage($event)'>
                                 <ngx-datatable-column name="ID loại sản phẩm">
