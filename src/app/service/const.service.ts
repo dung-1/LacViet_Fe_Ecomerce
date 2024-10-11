@@ -1,7 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, isDevMode } from '@angular/core';
-import { environment as env_dev } from '../../environments/environment';
-import { environment as env } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
@@ -9,8 +7,8 @@ import { environment as env } from '../../environments/environment.development';
 export class ConstService {
   constructor(private http: HttpClient) { }
   public static serverHost(): string {
-    // return isDevMode() ? 'http://192.168.1.20': '';
-        return isDevMode() ? 'http://192.168.1.20:7074': '';
+    return isDevMode() ? 'http://192.168.1.20': '';
+        // return isDevMode() ? 'http://192.168.1.20:7074': '';
   }
 
   public static readonly FREQUENCY = {};

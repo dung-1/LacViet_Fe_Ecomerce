@@ -7,6 +7,7 @@ import { MainLayoutComponent } from './main-layout.component';
 import { CategoryModule } from '../category/category.module';
 import { ProductModule } from '../product/product.module';
 import { AppsharedModule } from '../../shared/app-shared.module';
+import { IonicModule } from '@ionic/angular';
 
 
 @NgModule({
@@ -18,7 +19,9 @@ import { AppsharedModule } from '../../shared/app-shared.module';
     MainLayoutRoutingModule,
     CategoryModule,
     ProductModule,
-    AppsharedModule
+    AppsharedModule,
+    IonicModule.forRoot(),
+
   ],
   exports: [MainLayoutComponent],
 })

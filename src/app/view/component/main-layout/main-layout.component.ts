@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { IonAccordionGroup } from '@ionic/angular';
 
 @Component({
   selector: 'app-main-layout',
@@ -6,5 +7,15 @@ import { Component } from '@angular/core';
   styleUrl: './main-layout.component.css'
 })
 export class MainLayoutComponent {
+  @ViewChild('accordionGroup', { static: true }) accordionGroup: IonAccordionGroup;
+
+  toggleAccordion = () => {
+    const nativeEl = this.accordionGroup;
+    if (nativeEl.value === 'second') {
+      nativeEl.value = undefined;
+    } else {
+      nativeEl.value = 'second';
+    }
+  };
 
 }

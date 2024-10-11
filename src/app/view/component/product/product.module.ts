@@ -15,7 +15,8 @@ import { ProductComponent } from './product.component';
     HttpClientModule,
     NgxDatatableModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], 
 })

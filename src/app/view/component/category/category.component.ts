@@ -9,15 +9,14 @@ import { ConstService } from '../../../service/const.service';
 @Component({
   selector: 'app-category',
   templateUrl: './category.component.html',
-  styleUrl: './category.component.css'
+  styleUrl: './category.component.css',
 })
 export class CategoryComponent implements OnInit {
-
-  constructor(private apiService: ApiService,
+  constructor(
+    private apiService: ApiService,
     private notificationService: NotificationService,
     private fb: FormBuilder
   ) {
-
     this.addCategoryForm = this.fb.group({
       name: ['', Validators.required],
     });
@@ -28,9 +27,7 @@ export class CategoryComponent implements OnInit {
   }
   offset = 0;
   filteredCategories: Category[] = [];
-  contact: Category[] = [
-    { id: 1, name: '' },
-  ];
+  contact: Category[] = [{ id: 1, name: '' }];
   currentCategoryId: number | null = null;
   addCategoryForm: FormGroup;
   editCategoryForm: FormGroup;
@@ -55,7 +52,6 @@ export class CategoryComponent implements OnInit {
     );
   }
 
-
   onPage(event: any) {
     this.offset = event.offset;
   }
@@ -67,18 +63,27 @@ export class CategoryComponent implements OnInit {
         name: formValue.name,
         id: formValue.id,
       };
-      this.apiService.put(`${ConstService.updateCategory}/${this.currentCategoryId}`, categoryData).subscribe(
-        (response: Category) => {
-          this.notificationService.success('Chỉnh sửa thể loại thành công.');
-          this.loadcontacts();
-          this.editCategoryForm.reset();
-          const modalCloseButton = document.querySelector('#exampleModaledit .btn-close') as HTMLElement;
-          modalCloseButton?.click();
-        },
-        (error) => {
-          this.notificationService.error('Có lỗi xảy ra khi chỉnh sửa thể loại.');
-        }
-      );
+      this.apiService
+        .put(
+          `${ConstService.updateCategory}/${this.currentCategoryId}`,
+          categoryData
+        )
+        .subscribe(
+          (response: Category) => {
+            this.notificationService.success('Chỉnh sửa thể loại thành công.');
+            this.loadcontacts();
+            this.editCategoryForm.reset();
+            const modalCloseButton = document.querySelector(
+              '#exampleModaledit .btn-close'
+            ) as HTMLElement;
+            modalCloseButton?.click();
+          },
+          (error) => {
+            this.notificationService.error(
+              'Có lỗi xảy ra khi chỉnh sửa thể loại.'
+            );
+          }
+        );
     }
   }
 
@@ -87,7 +92,6 @@ export class CategoryComponent implements OnInit {
     this.editCategoryForm.patchValue({
       id: category.id,
       name: category.name,
-
     });
   }
 
@@ -96,7 +100,6 @@ export class CategoryComponent implements OnInit {
       const formValue = this.addCategoryForm.value;
       const categoryData: Partial<Category> = {
         name: formValue.name,
-
       };
 
       this.apiService.post(ConstService.addCategory, categoryData).subscribe(
@@ -104,12 +107,18 @@ export class CategoryComponent implements OnInit {
           this.notificationService.success('Thêm thể loại thành công.');
           this.loadcontacts();
           this.addCategoryForm.reset();
-          const modalCloseButton = document.querySelector('#exampleModaladd .btn-close') as HTMLElement;
+          const modalCloseButton = document.querySelector(
+            '#exampleModaladd .btn-close'
+          ) as HTMLElement;
           modalCloseButton?.click();
         },
         (error) => {
           this.notificationService.error('Có lỗi xảy ra khi thêm thể loại.');
         }
+      );
+    } else {
+      this.notificationService.warning(
+        'Vui lòng điền thông tin thêm thể loại.'
       );
     }
   }
@@ -117,24 +126,25 @@ export class CategoryComponent implements OnInit {
   deleteCategory(categoryId: number) {
     Swal.fire({
       title: 'Bạn có chắc chắn muốn xóa?',
-      text: "Bạn sẽ không thể khôi phục lại dữ liệu này!",
+      text: 'Bạn sẽ không thể khôi phục lại dữ liệu này!',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Vâng, xóa nó!'
+      confirmButtonText: 'Vâng, xóa nó!',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.apiService.delete(`${ConstService.deleteCategory}/${categoryId}`).subscribe(
-          (response) => {
-            this.notificationService.success('Xóa thể loại thành công.');
-            this.loadcontacts();
-          },
-          (error) => {
-            this.notificationService.error('Không thể xóa thể loại này.');
-
-          }
-        );
+        this.apiService
+          .delete(`${ConstService.deleteCategory}/${categoryId}`)
+          .subscribe(
+            (response) => {
+              this.notificationService.success('Xóa thể loại thành công.');
+              this.loadcontacts();
+            },
+            (error) => {
+              this.notificationService.error('Không thể xóa thể loại này.');
+            }
+          );
       }
     });
   }

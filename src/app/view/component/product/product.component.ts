@@ -1,12 +1,12 @@
+import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
+import { Category } from '../../../model/Category';
+import { Product } from '../../../model/Product';
 import { ApiService } from '../../../service/Api/api.service';
 import { NotificationService } from '../../../service/Notification/notification.service';
 import { ConstService } from '../../../service/const.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import Swal from 'sweetalert2';
-import { Product } from '../../../model/Product';
-import { isPlatformBrowser } from '@angular/common';
-import { Category } from '../../../model/Category';
 
 @Component({
   selector: 'app-product',
@@ -43,7 +43,7 @@ export class ProductComponent implements OnInit {
   product: Product[] = [
     { id: 1, name: '', price: 1, image: '', categoryId: 1 },
   ];
-  categories= [{ id: 1, name: 'Category 1' }];
+  categories = [{ id: 1, name: 'Category 1' }];
   editMode = false;
   currentProductId: number | null = null;
   editProductForm: FormGroup;
@@ -51,7 +51,7 @@ export class ProductComponent implements OnInit {
     { prop: 'id', name: 'ID sản phẩm' },
     { prop: 'name', name: 'Tên loại sản phẩm' },
   ];
-  filteredCategories:  Category[] = [];
+  filteredCategories: Category[] = [];
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.loadCategories();
@@ -76,7 +76,9 @@ export class ProductComponent implements OnInit {
   loadProducts() {
     this.apiService.get(ConstService.getAllProduct).subscribe(
       (response) => {
-        this.filteredProduct = response;
+        this.filteredProduct = response.sort(
+          (a: { id: number }, b: { id: number }) => a.id - b.id
+        );
       },
       (error) => {
         this.notificationService.error(
@@ -99,13 +101,13 @@ export class ProductComponent implements OnInit {
       formData.append('name', formValue.name);
       formData.append('price', formValue.price.toString());
       formData.append('categoryId', formValue.categoryId.toString());
-  
+
       if (this.selectedFile) {
         formData.append('imageFile', this.selectedFile);
       } else {
         formData.append('noNewImage', 'true');
       }
-  
+
       this.apiService
         .putFormData(
           `${ConstService.updateProduct}/${this.currentProductId}`,
@@ -130,7 +132,8 @@ export class ProductComponent implements OnInit {
           }
         );
     }
-  }  openEditModal(product: Product) {
+  }
+  openEditModal(product: Product) {
     this.currentProductId = product.id;
     this.editProductForm.patchValue({
       id: product.id,
@@ -172,6 +175,8 @@ export class ProductComponent implements OnInit {
           this.notificationService.error('Có lỗi xảy ra khi thêm sản phẩm.');
         }
       );
+    } else {
+      this.notificationService.warning('Vui lòng điền thông tin thêm sản phẩm.');
     }
   }
 
@@ -214,12 +219,11 @@ export class ProductComponent implements OnInit {
   onFileChange(event: any): void {
     const file = event.target.files[0];
     if (file) {
-      this.selectedFile = file; 
+      this.selectedFile = file;
       this.addProductForm.patchValue({ image: file.name });
-      this.editProductForm.patchValue({ image: file.name }); 
+      this.editProductForm.patchValue({ image: file.name });
     } else {
-      this.selectedFile = null; 
+      this.selectedFile = null;
     }
-  }
-  
+  } 
 }
