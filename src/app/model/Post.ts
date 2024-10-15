@@ -1,8 +1,10 @@
 export interface Post {
     id: number;
-    name: string;
-    price: number;
-    image:string;
-    categoryId:number;
+    title: string;
+    content: string;
+    categoryId: number;
+    fromDate?: string;
+    toDate?: string;
+    excerptImage?: string;
     modifiedTime?: string;
   }
