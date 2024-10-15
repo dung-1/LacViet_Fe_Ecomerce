@@ -7,6 +7,7 @@ import { Post } from '../../../model/Post';
 import { ApiService } from '../../../service/Api/api.service';
 import { NotificationService } from '../../../service/Notification/notification.service';
 import { ConstService } from '../../../service/const.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-post',
@@ -15,6 +16,7 @@ import { ConstService } from '../../../service/const.service';
 })
 export class PostComponent implements OnInit {
   constructor(
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object,
     private apiService: ApiService,
     private notificationService: NotificationService,
@@ -29,7 +31,7 @@ export class PostComponent implements OnInit {
   offset = 0;
   filteredPost: Post[] = [];
   Post: Post[] = [
-    { id: 1, name: '', price: 1, image: '', categoryId: 1 },
+    { id: 1, title: '', content: '', excerptImage: '', categoryId: 1 },
   ];
   categories = [{ id: 1, name: 'Category 1' }];
   editMode = false;
@@ -74,7 +76,7 @@ export class PostComponent implements OnInit {
   loadCategories(): void {
     this.apiService.get(`${ConstService.getAllCategory}`).subscribe(
       (data) => {
-        const parentCategory = data.find((category: { name: string; }) => category.name === 'Sản phẩm');
+        const parentCategory = data.find((category: { name: string; }) => category.name === 'Tin tức');
         if (parentCategory) {
           this.categories = data.filter((category: { parentCategoryId: number; }) => category.parentCategoryId === parentCategory.id);
           this.categoryIds = this.categories.map((category: { id: number }) => category.id);
@@ -82,7 +84,6 @@ export class PostComponent implements OnInit {
           this.categories = [];
           this.categoryIds = [];
         }
-        console.log(this.categories);
       },
       (error) => {
         console.error('Error loading categories', error);
@@ -90,7 +91,6 @@ export class PostComponent implements OnInit {
     );
   }
   
-
   loadPosts() {
     this.apiService.get(`${ConstService.getAllPost}`).subscribe(
       (data: Post[]) => {
@@ -136,6 +136,11 @@ export class PostComponent implements OnInit {
     });
   }
 
-
-
+  navigateTo(path: string) {
+    this.router.navigate([path]);
+    // window.location.reload();
+  }
+  editPost(postId: number): void {
+    this.router.navigate(['/post/edit', postId]);
+  }
 }
