@@ -7,6 +7,7 @@ import { Product } from '../../../model/Product';
 import { ApiService } from '../../../service/Api/api.service';
 import { NotificationService } from '../../../service/Notification/notification.service';
 import { ConstService } from '../../../service/const.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product',
@@ -15,6 +16,7 @@ import { ConstService } from '../../../service/const.service';
 })
 export class ProductComponent implements OnInit {
   constructor(
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object,
     private apiService: ApiService,
     private notificationService: NotificationService,
@@ -35,6 +37,7 @@ export class ProductComponent implements OnInit {
       image: [''],
     });
   }
+  categoryIds: number[] = [];
   currentProductImage: string | null = null;
   addProductForm!: FormGroup;
   selectedFile!: File | null;
@@ -50,7 +53,14 @@ export class ProductComponent implements OnInit {
   columns = [
     { prop: 'id', name: 'ID sản phẩm' },
     { prop: 'name', name: 'Tên loại sản phẩm' },
+    { prop: 'price', name: 'Gía sản phẩm' },
+    { prop: 'image', name: 'ảnh sản phẩm' },
+    { prop: 'categoryId', name: 'loại sản phẩm' },
+
   ];
+  Allproduct: Product[] = [];
+  totalItems: Product[] = [];
+
   filteredCategories: Category[] = [];
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -59,35 +69,46 @@ export class ProductComponent implements OnInit {
     }
   }
 
-  loadCategories() {
-    this.apiService.get(ConstService.getAllCategory).subscribe(
-      (response) => {
-        this.categories = response;
-        this.filteredCategories = [...this.categories];
+
+  loadCategories(): void {
+    this.apiService.get(`${ConstService.getAllCategory}`).subscribe(
+      (data) => {
+        const parentCategory = data.find((category: { name: string; }) => category.name === 'Sản phẩm');
+        if (parentCategory) {
+          this.categories = data.filter((category: { parentCategoryId: number; }) => category.parentCategoryId === parentCategory.id);
+          this.categoryIds = this.categories.map((category: { id: number }) => category.id);
+        } else {
+          this.categories = [];
+          this.categoryIds = [];
+        }
+        console.log(this.categories);
       },
       (error) => {
-        this.notificationService.error(
-          'Có lỗi xảy ra khi tải danh sách danh mục.'
-        );
+        console.error('Error loading categories', error);
       }
     );
   }
+  
 
   loadProducts() {
-    this.apiService.get(ConstService.getAllProduct).subscribe(
-      (response) => {
-        this.filteredProduct = response.sort(
-          (a: { id: number }, b: { id: number }) => a.id - b.id
+    this.apiService.get(`${ConstService.getAllProduct}`).subscribe(
+      (data: Product[]) => {
+        this.Allproduct = data.filter((product: { categoryId: number }) => 
+          this.categoryIds.includes(product.categoryId)
         );
-      },
-      (error) => {
-        this.notificationService.error(
-          'Có lỗi xảy ra khi tải danh sách sản phẩm .'
-        );
+        this.Allproduct.sort((a, b) => {
+          const dateA = a.modifiedTime ? new Date(a.modifiedTime).getTime() : 0;
+          const dateB = b.modifiedTime ? new Date(b.modifiedTime).getTime() : 0;
+          return dateB - dateA;
+        });
+        this.totalItems = this.Allproduct;
+        this.filteredProduct = this.Allproduct.slice(this.offset, this.offset + 5);
+      },      (error) => {
+        console.error('Error fetching Product:', error);
       }
     );
   }
-
+  
   onPage(event: any) {
     this.offset = event.offset;
   }
@@ -107,7 +128,6 @@ export class ProductComponent implements OnInit {
       } else {
         formData.append('noNewImage', 'true');
       }
-
       this.apiService
         .putFormData(
           `${ConstService.updateProduct}/${this.currentProductId}`,
@@ -210,7 +230,10 @@ export class ProductComponent implements OnInit {
       }
     });
   }
-
+  navigateTo(path: string) {
+    this.router.navigate([path]);
+    // window.location.reload();
+  }
   getCategoryName(categoryId: number): string {
     const category = this.categories.find((c) => c.id === categoryId);
     return category ? category.name : 'Unknown';

@@ -19,30 +19,42 @@ export class CategoryComponent implements OnInit {
   ) {
     this.addCategoryForm = this.fb.group({
       name: ['', Validators.required],
+      categoryId: [undefined, Validators.required]
+
     });
     this.editCategoryForm = this.fb.group({
       id: ['', Validators.required],
       name: ['', Validators.required],
+      parentCategoryId: [undefined, Validators.required]
     });
   }
   offset = 0;
   filteredCategories: Category[] = [];
-  contact: Category[] = [{ id: 1, name: '' }];
+  Category: Category[] = [{ id: 1, name: 'Category 1', parentCategoryId: 1 }];
   currentCategoryId: number | null = null;
   addCategoryForm: FormGroup;
   editCategoryForm: FormGroup;
+  parentCategories: Category[] = [{ id: 1, name: 'Category 1', parentCategoryId: 1 }];
+
   columns = [
     { prop: 'id', name: 'ID sản phẩm' },
     { prop: 'name', name: 'Tên loại sản phẩm' },
   ];
   ngOnInit(): void {
-    this.loadcontacts();
+    this.filteredCategories = this.Category;
+    this.loadCategory();
+    this.loadParentCategories();
   }
 
-  loadcontacts() {
+  loadCategory() {
     this.apiService.get(ConstService.getAllCategory).subscribe(
-      (response) => {
-        this.filteredCategories = response;
+      (data: Category[]) => {
+              this.Category = data.sort((a, b) => {
+                const dateA = a.modifiedTime ? new Date(a.modifiedTime).getTime() : 0;
+                const dateB = b.modifiedTime ? new Date(b.modifiedTime).getTime() : 0;
+                return dateB - dateA;
+              });
+        this.updateFilter();
       },
       (error) => {
         this.notificationService.error(
@@ -51,9 +63,40 @@ export class CategoryComponent implements OnInit {
       }
     );
   }
+  
+  isParentCategory(categoryName: string): boolean {
+    return categoryName === 'Sản phẩm' || categoryName === 'Tin tức';
+  }
 
+  getCategoryName(ParentCategoryId: number | undefined): string {
+    if (ParentCategoryId === undefined) {
+      return '';
+    }
+    const parentCategory = this.Category.find(cat => cat.id === ParentCategoryId);
+    return parentCategory ? parentCategory.name : '';
+  }
+
+  updateFilter(event?: any) {
+    const val = event ? event.target.value.toLowerCase() : '';
+    this.filteredCategories = this.Category.filter(category => {
+      return category.name.toLowerCase().includes(val);
+    });
+  }
   onPage(event: any) {
     this.offset = event.offset;
+  }
+
+  loadParentCategories() {
+    this.apiService.get(ConstService.getAllCategory).subscribe(
+      (response: Category[]) => {
+        this.parentCategories = response.filter(category =>
+          category.name === 'Sản phẩm' || category.name === 'Tin tức'
+        );
+      },
+      (error) => {
+        this.notificationService.error('Có lỗi xảy ra khi tải danh sách thể loại cha.');
+      }
+    );
   }
 
   updateCategory() {
@@ -62,6 +105,7 @@ export class CategoryComponent implements OnInit {
       const categoryData: Partial<Category> = {
         name: formValue.name,
         id: formValue.id,
+        parentCategoryId: formValue.parentCategoryId,
       };
       this.apiService
         .put(
@@ -71,7 +115,7 @@ export class CategoryComponent implements OnInit {
         .subscribe(
           (response: Category) => {
             this.notificationService.success('Chỉnh sửa thể loại thành công.');
-            this.loadcontacts();
+            this.loadCategory();
             this.editCategoryForm.reset();
             const modalCloseButton = document.querySelector(
               '#exampleModaledit .btn-close'
@@ -88,11 +132,14 @@ export class CategoryComponent implements OnInit {
   }
 
   openEditModal(category: Category) {
-    this.currentCategoryId = category.id;
-    this.editCategoryForm.patchValue({
-      id: category.id,
-      name: category.name,
-    });
+    if (!this.isParentCategory(category.name)) {
+      this.currentCategoryId = category.id;
+      this.editCategoryForm.patchValue({
+        id: category.id,
+        name: category.name,
+        parentCategoryId: category.parentCategoryId
+      });
+    }
   }
 
   addCategory() {
@@ -100,12 +147,13 @@ export class CategoryComponent implements OnInit {
       const formValue = this.addCategoryForm.value;
       const categoryData: Partial<Category> = {
         name: formValue.name,
+        parentCategoryId: formValue.categoryId,
       };
 
       this.apiService.post(ConstService.addCategory, categoryData).subscribe(
         (response: Category) => {
           this.notificationService.success('Thêm thể loại thành công.');
-          this.loadcontacts();
+          this.loadCategory();
           this.addCategoryForm.reset();
           const modalCloseButton = document.querySelector(
             '#exampleModaladd .btn-close'
@@ -139,7 +187,7 @@ export class CategoryComponent implements OnInit {
           .subscribe(
             (response) => {
               this.notificationService.success('Xóa thể loại thành công.');
-              this.loadcontacts();
+              this.loadCategory();
             },
             (error) => {
               this.notificationService.error('Không thể xóa thể loại này.');

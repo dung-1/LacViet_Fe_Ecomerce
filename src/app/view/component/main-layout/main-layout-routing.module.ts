@@ -4,6 +4,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { MainLayoutComponent } from './main-layout.component';
 import { CategoryComponent } from '../category/category.component';
 import { ProductComponent } from '../product/product.component';
+import { PostComponent } from '../post/post.component';
+import { AddPostComponent } from '../post/add-post/add-post.component';
+import { EditPostComponent } from '../post/edit-post/edit-post.component';
 
 
 const routes: Routes = [
@@ -18,6 +21,18 @@ const routes: Routes = [
       {
         path: 'product',
         component: ProductComponent,
+      },
+      {
+        path: 'post',
+        component: PostComponent,
+      },
+      {
+        path: 'post/create',
+        component: AddPostComponent,
+      },
+      {
+        path: 'post/edit/:id',
+        component: EditPostComponent,
       },
     ],
   },
