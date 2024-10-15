@@ -17,6 +17,15 @@
                         <label for="recipient-name" class="col-form-label">Tên thể loại:</label>
                         <input type="text" class="form-control" id="recipient-name" formControlName="name" />
                     </div>
+                    <div class="mb-3">
+                        <label for="categoryId">Thể loại cha</label>
+                        <select id="categoryId" formControlName="categoryId" class="form-control">
+                            <option [value]="null">---None---</option>
+                            <option *ngFor="let category of parentCategories" [value]="category.id">
+                                {{ category.name }}
+                            </option>
+                        </select>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -33,39 +42,53 @@
 
 <div class="modal fade" id="exampleModaledit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Chỉnh sửa thể loại</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form [formGroup]="editCategoryForm" *ngIf="this.editCategoryForm">
-            <input type="hidden" class="form-control" formControlName="id" />
-            <div class="mb-3">
-              <label for="recipient-name" class="col-form-label">Tên thể loại:</label>
-              <input type="text" class="form-control" id="recipient-name" formControlName="name" />
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    Chỉnh sửa thể loại
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-          </form>
+            <div class="modal-body">
+                <form [formGroup]="editCategoryForm" *ngIf="this.editCategoryForm">
+                    <input type="hidden" class="form-control" formControlName="id" />
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Tên thể loại:</label>
+                        <input type="text" class="form-control" id="recipient-name" formControlName="name" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="parentCategoryId">Thể loại cha</label>
+                        <select id="parentCategoryId" formControlName="parentCategoryId" class="form-control">
+                            <option [value]="null">---None---</option>
+                            <option *ngFor="let category of parentCategories" [value]="category.id">
+                                {{ category.name }}
+                            </option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Đóng
+                </button>
+                <button type="button" class="btn btn-primary" (click)="updateCategory()">
+                    Chỉnh sửa thể loại
+                </button>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-          <button type="button" class="btn btn-primary" (click)="updateCategory()">Chỉnh sửa thể loại</button>
-        </div>
-      </div>
     </div>
-  </div>
-  
+</div>
 
 <div class="page-heading">
     <div class="page-title">
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Quản lý loại sản phẩm</h3>
+                <h3>Quản lý thể loại</h3>
             </div>
         </div>
     </div>
 
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModaladd"
+    <button type="button" class="btn btn-secondary m-3" data-bs-toggle="modal" data-bs-target="#exampleModaladd"
         data-bs-whatever="@mdo">
         <i class="bi bi-plus"></i> Thêm Thể loại
     </button>
@@ -77,39 +100,46 @@
                 <div class="card">
                     <div class="card-content">
                         <div class="card-body">
-                            <div class="row mb-3 search-input">
-                            </div>
-                            <ngx-datatable class="material" [rows]="filteredCategories" [columnMode]="'force'"
-                                [headerHeight]="50" [footerHeight]="50" [columns]="columns" [rowHeight]="'auto'"
-                                [limit]="5" [count]="filteredCategories.length"
-                                [offset]="offset" (page)='onPage($event)'>
-                                <ngx-datatable-column name="ID loại sản phẩm">
-                                    <ng-template let-row="row" ngx-datatable-cell-template>
-                                        {{ row.id }}
-                                    </ng-template>
-                                </ngx-datatable-column>
-                                <ngx-datatable-column name="Tên loại sản phẩm ">
-                                    <ng-template let-row="row" ngx-datatable-cell-template>
-                                        {{ row.name }}
-                                    </ng-template>
-                                </ngx-datatable-column>
-                                <ngx-datatable-column name="Chỉnh sửa">
-                                    <ng-template ngx-datatable-cell-template let-row="row">
-                                        <button class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#exampleModaledit" data-bs-whatever="@mdo"
-                                            (click)="openEditModal(row)">
-                                            <i class="bi bi-pencil-square"></i> Sửa
-                                        </button>
-                                    </ng-template>
-                                </ngx-datatable-column>
-                                <ngx-datatable-column name="Xóa">
-                                    <ng-template ngx-datatable-cell-template let-row="row">
-                                        <button class="btn btn-danger" (click)="deleteCategory(row.id)">
-                                            <i class="bi bi-x"></i> Xóa
-                                        </button>
-                                    </ng-template>
-                                </ngx-datatable-column>
-                            </ngx-datatable>
+                            <div class="row mb-3 search-input"></div>
+                            <ng-container *ngIf="filteredCategories.length > 0">
+                                <ngx-datatable class="material" [rows]="filteredCategories" [columnMode]="'force'"
+                                    [headerHeight]="50" [footerHeight]="50" [columns]="columns" [rowHeight]="'auto'"
+                                    [limit]="5" [count]="filteredCategories.length" [offset]="offset"
+                                    (page)="onPage($event)">
+                                    <ngx-datatable-column name="ID thể loại">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            {{ row.id }}
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                    <ngx-datatable-column name="Tên thể loại ">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            {{ row.name }}
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                    <ngx-datatable-column name="Thể loại cha">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            {{ getCategoryName(row.parentCategoryId) }}
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                    <ngx-datatable-column name="Chỉnh sửa">
+                                        <ng-template ngx-datatable-cell-template let-row="row">
+                                            <button *ngIf="!isParentCategory(row.name)" class="btn btn-primary"
+                                                data-bs-toggle="modal" data-bs-target="#exampleModaledit"
+                                                data-bs-whatever="@mdo" (click)="openEditModal(row)">
+                                                <i class="bi bi-pencil-square"></i>sửa
+                                            </button>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                    <ngx-datatable-column name="Xóa">
+                                        <ng-template ngx-datatable-cell-template let-row="row">
+                                            <button *ngIf="!isParentCategory(row.name)" class="btn btn-danger"
+                                                (click)="deleteCategory(row.id)">
+                                                <i class="bi bi-x"></i> Xóa
+                                            </button>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                </ngx-datatable>
+                            </ng-container>
                         </div>
                     </div>
                 </div>

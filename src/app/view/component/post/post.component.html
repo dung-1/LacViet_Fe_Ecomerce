@@ -1,0 +1,88 @@
+<div class="page-heading">
+  <div class="page-title">
+    <div class="row">
+      <div class="col-12 col-md-6 order-md-1 order-last">
+        <h3>Quản lý Tin tức</h3>
+      </div>
+    </div>
+  </div>
+
+
+  <a (click)="navigateTo('/post/create')" class="btn btn-secondary m-3">
+    <i class="bi bi-plus"></i>
+    <span>Thêm tin tức</span>
+  </a>
+
+  <!-- Hoverable rows start -->
+  <section class="section">
+    <div class="row" id="table-hover-row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="row mb-3 search-input"></div>
+              <ngx-datatable class="material" [rows]="filteredPost" [columnMode]="'force'" [headerHeight]="50"
+                [footerHeight]="50" [rowHeight]="'auto'" [limit]="5" [count]="totalItems.length" [offset]="offset"
+                (page)="onPage($event)"> 
+                
+                <ngx-datatable-column name="ID Tin tức">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.id }}
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Tên Tin tức ">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.title }}
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Từ Ngày ">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.fromDate |date:'dd/MM/yyyy' }}
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Đến Ngày ">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.toDate | date:'dd/MM/yyyy' }}
+                  </ng-template>
+
+                </ngx-datatable-column>
+                <ngx-datatable-column name="ảnh Tin tức ">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <img [src]="getFullImageUrl(row.excerptImage)" alt="{{ row.title }}"
+                      style="width: 100px; height: auto" />
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Loại Tin tức ">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ getCategoryName(row.categoryId) }}
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Chỉnh sửa">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <button class="btn btn-primary" (click)="editPost(row.id)">
+                      <i class="bi bi-pencil-square"></i> Sửa
+                    </button>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Xóa">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <button class="btn btn-danger" (click)="deletePost(row.id)">
+                      <ion-icon name="trash-bin-outline"></ion-icon> Xóa
+                    </button>
+                  </ng-template>
+                </ngx-datatable-column>
+
+              </ngx-datatable>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

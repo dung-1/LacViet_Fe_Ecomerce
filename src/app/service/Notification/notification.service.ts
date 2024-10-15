@@ -22,4 +22,12 @@ export class NotificationService {
       'error'
     );
   }
+  warning(message: string) {
+    Swal.fire(
+      'Lỗi!',
+      message,
+      'warning'
+    );
+  }
+
 }

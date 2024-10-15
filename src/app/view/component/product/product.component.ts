@@ -1,12 +1,13 @@
+import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
+import { Category } from '../../../model/Category';
+import { Product } from '../../../model/Product';
 import { ApiService } from '../../../service/Api/api.service';
 import { NotificationService } from '../../../service/Notification/notification.service';
 import { ConstService } from '../../../service/const.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import Swal from 'sweetalert2';
-import { Product } from '../../../model/Product';
-import { isPlatformBrowser } from '@angular/common';
-import { Category } from '../../../model/Category';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product',
@@ -15,6 +16,7 @@ import { Category } from '../../../model/Category';
 })
 export class ProductComponent implements OnInit {
   constructor(
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object,
     private apiService: ApiService,
     private notificationService: NotificationService,
@@ -35,6 +37,7 @@ export class ProductComponent implements OnInit {
       image: [''],
     });
   }
+  categoryIds: number[] = [];
   currentProductImage: string | null = null;
   addProductForm!: FormGroup;
   selectedFile!: File | null;
@@ -43,15 +46,22 @@ export class ProductComponent implements OnInit {
   product: Product[] = [
     { id: 1, name: '', price: 1, image: '', categoryId: 1 },
   ];
-  categories= [{ id: 1, name: 'Category 1' }];
+  categories = [{ id: 1, name: 'Category 1' }];
   editMode = false;
   currentProductId: number | null = null;
   editProductForm: FormGroup;
   columns = [
     { prop: 'id', name: 'ID sản phẩm' },
     { prop: 'name', name: 'Tên loại sản phẩm' },
+    { prop: 'price', name: 'Gía sản phẩm' },
+    { prop: 'image', name: 'ảnh sản phẩm' },
+    { prop: 'categoryId', name: 'loại sản phẩm' },
+
   ];
-  filteredCategories:  Category[] = [];
+  Allproduct: Product[] = [];
+  totalItems: Product[] = [];
+
+  filteredCategories: Category[] = [];
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.loadCategories();
@@ -59,33 +69,46 @@ export class ProductComponent implements OnInit {
     }
   }
 
-  loadCategories() {
-    this.apiService.get(ConstService.getAllCategory).subscribe(
-      (response) => {
-        this.categories = response;
-        this.filteredCategories = [...this.categories];
+
+  loadCategories(): void {
+    this.apiService.get(`${ConstService.getAllCategory}`).subscribe(
+      (data) => {
+        const parentCategory = data.find((category: { name: string; }) => category.name === 'Sản phẩm');
+        if (parentCategory) {
+          this.categories = data.filter((category: { parentCategoryId: number; }) => category.parentCategoryId === parentCategory.id);
+          this.categoryIds = this.categories.map((category: { id: number }) => category.id);
+        } else {
+          this.categories = [];
+          this.categoryIds = [];
+        }
+        console.log(this.categories);
       },
       (error) => {
-        this.notificationService.error(
-          'Có lỗi xảy ra khi tải danh sách danh mục.'
-        );
+        console.error('Error loading categories', error);
       }
     );
   }
+  
 
   loadProducts() {
-    this.apiService.get(ConstService.getAllProduct).subscribe(
-      (response) => {
-        this.filteredProduct = response;
-      },
-      (error) => {
-        this.notificationService.error(
-          'Có lỗi xảy ra khi tải danh sách sản phẩm .'
+    this.apiService.get(`${ConstService.getAllProduct}`).subscribe(
+      (data: Product[]) => {
+        this.Allproduct = data.filter((product: { categoryId: number }) => 
+          this.categoryIds.includes(product.categoryId)
         );
+        this.Allproduct.sort((a, b) => {
+          const dateA = a.modifiedTime ? new Date(a.modifiedTime).getTime() : 0;
+          const dateB = b.modifiedTime ? new Date(b.modifiedTime).getTime() : 0;
+          return dateB - dateA;
+        });
+        this.totalItems = this.Allproduct;
+        this.filteredProduct = this.Allproduct.slice(this.offset, this.offset + 5);
+      },      (error) => {
+        console.error('Error fetching Product:', error);
       }
     );
   }
-
+  
   onPage(event: any) {
     this.offset = event.offset;
   }
@@ -99,13 +122,12 @@ export class ProductComponent implements OnInit {
       formData.append('name', formValue.name);
       formData.append('price', formValue.price.toString());
       formData.append('categoryId', formValue.categoryId.toString());
-  
+
       if (this.selectedFile) {
         formData.append('imageFile', this.selectedFile);
       } else {
         formData.append('noNewImage', 'true');
       }
-  
       this.apiService
         .putFormData(
           `${ConstService.updateProduct}/${this.currentProductId}`,
@@ -130,7 +152,8 @@ export class ProductComponent implements OnInit {
           }
         );
     }
-  }  openEditModal(product: Product) {
+  }
+  openEditModal(product: Product) {
     this.currentProductId = product.id;
     this.editProductForm.patchValue({
       id: product.id,
@@ -172,6 +195,8 @@ export class ProductComponent implements OnInit {
           this.notificationService.error('Có lỗi xảy ra khi thêm sản phẩm.');
         }
       );
+    } else {
+      this.notificationService.warning('Vui lòng điền thông tin thêm sản phẩm.');
     }
   }
 
@@ -205,7 +230,10 @@ export class ProductComponent implements OnInit {
       }
     });
   }
-
+  navigateTo(path: string) {
+    this.router.navigate([path]);
+    // window.location.reload();
+  }
   getCategoryName(categoryId: number): string {
     const category = this.categories.find((c) => c.id === categoryId);
     return category ? category.name : 'Unknown';
@@ -214,12 +242,11 @@ export class ProductComponent implements OnInit {
   onFileChange(event: any): void {
     const file = event.target.files[0];
     if (file) {
-      this.selectedFile = file; 
+      this.selectedFile = file;
       this.addProductForm.patchValue({ image: file.name });
-      this.editProductForm.patchValue({ image: file.name }); 
+      this.editProductForm.patchValue({ image: file.name });
     } else {
-      this.selectedFile = null; 
+      this.selectedFile = null;
     }
-  }
-  
+  } 
 }

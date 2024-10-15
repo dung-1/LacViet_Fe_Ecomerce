@@ -42,27 +42,9 @@ export class ApiService {
   postFormData(bareUrl: string, formData: FormData): Observable<any> {
     return this.http.post<any>(`${this.endpoint}/${bareUrl}`, formData);
   }
-  putFormData(bareUrl: string, formData: FormData): Observable<any> {
-    const url = `${this.endpoint}/${bareUrl}`;
-    console.log('Sending PUT request to:', url);
-    
-    // Log ra nội dung của FormData
-    formData.forEach((value, key) => {
-      console.log(key, value);
-    });
 
-    return this.http.put<any>(url, formData).pipe(
-      tap(response => console.log('Server response:', response)),
-      catchError(this.handleError)
-    );
+  putFormData(bareUrl: string, formData: FormData): Observable<any> {
+    return this.http.put<any>(`${this.endpoint}/${bareUrl}`, formData);
   }
-  private handleError(error: HttpErrorResponse) {
-    console.error('An error occurred:', error);
-    if (error.error instanceof ErrorEvent) {
-      console.error('Client-side or network error:', error.error.message);
-    } else {
-      console.error(`Backend returned code ${error.status}, body was:`, error.error);
-    }
-    return throwError('Something bad happened; please try again later.');
-  }
+  
 }

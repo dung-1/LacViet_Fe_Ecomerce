@@ -3,12 +3,11 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ProductComponent } from './product.component';
-
+import { PostComponent } from './post.component';
 
 @NgModule({
-  declarations: [ProductComponent],
-  exports: [ProductComponent],
+  declarations: [PostComponent],
+  exports: [PostComponent],
 
   imports: [
     CommonModule, 
@@ -16,8 +15,7 @@ import { ProductComponent } from './product.component';
     NgxDatatableModule,
     FormsModule,
     ReactiveFormsModule,
-
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], 
 })
-export class ProductModule { }
+export class PostModule { }

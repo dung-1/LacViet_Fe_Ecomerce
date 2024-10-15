@@ -1,0 +1,17 @@
+.e-input-fill {
+    padding: 10px 0px !important;
+}
+.e-custom-reset,.e-custom-submit {
+    border-radius: 0;
+    height: 30px;
+    width: 80px;
+  }
+  
+  .e-custom-reset, .e-custom-reset:hover, .e-custom-reset:focus, .e-custom-reset:active {
+    background-color: #ff6e40;
+    color: #fff;
+  }
+  .e-custom-submit, .e-custom-submit:hover, .e-custom-submit:focus, .e-custom-submit:active {
+    background-color: #65f015;
+    color: #fff;
+  }
