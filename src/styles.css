@@ -1,6 +1,136 @@
-/* You can add global styles to this file, and also import other style files */
-@import '../node_modules/@syncfusion/ej2-base/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-buttons/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-inputs/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-popups/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-angular-inputs/styles/material.css';
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+.admin-shell {
+  height: 100vh;
+}
+
+.admin-content {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.table-card {
+  overflow: auto;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 320px;
+  padding-top: 8px;
+}
+
+.file-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.preview-image {
+  max-width: 120px;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.thumb-image {
+  width: 80px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.search-field {
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 16px;
+}
+
+.sidenav-logo {
+  padding: 16px 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.sidenav-logo span {
+  vertical-align: middle;
+}
+
+mat-nav-list a.active {
+  background: rgba(67, 94, 190, 0.12);
+}
+
+.snackbar-success {
+  --mdc-snackbar-container-color: #2e7d32;
+  --mat-snack-bar-button-color: #fff;
+}
+
+.snackbar-error {
+  --mdc-snackbar-container-color: #c62828;
+  --mat-snack-bar-button-color: #fff;
+}
+
+.snackbar-warning {
+  --mdc-snackbar-container-color: #ef6c00;
+  --mat-snack-bar-button-color: #fff;
+}
+
+.post-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+}
+
+.post-form-section {
+  padding: 16px 0;
+}
+
+.post-form-section h4 {
+  margin: 0 0 12px;
+  font-weight: 500;
+}
+
+.post-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .post-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,21 +1,37 @@
-import { Component, ViewChild } from '@angular/core';
-import { IonAccordionGroup } from '@ionic/angular';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-main-layout',
   templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.css'
+  styleUrl: './main-layout.component.css',
 })
-export class MainLayoutComponent {
-  @ViewChild('accordionGroup', { static: true }) accordionGroup: IonAccordionGroup;
+export class MainLayoutComponent implements OnInit, OnDestroy {
+  @ViewChild('drawer') drawer!: MatSidenav;
 
-  toggleAccordion = () => {
-    const nativeEl = this.accordionGroup;
-    if (nativeEl.value === 'second') {
-      nativeEl.value = undefined;
-    } else {
-      nativeEl.value = 'second';
-    }
-  };
+  isMobile = false;
+  private destroy$ = new Subject<void>();
 
+  constructor(private breakpointObserver: BreakpointObserver) {}
+
+  ngOnInit(): void {
+    this.breakpointObserver
+      .observe(['(max-width: 959px)'])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((result) => {
+        this.isMobile = result.matches;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  toggleSidenav(): void {
+    this.drawer.toggle();
+  }
 }

@@ -1,4 +1,12 @@
-a {
-    cursor: pointer;
+.sidenav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #435ebe;
+}
 
+.sidenav-logo mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
 }

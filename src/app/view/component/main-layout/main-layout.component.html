@@ -1,14 +1,28 @@
-<div id="app">
-    <!-- ========= header ========= -->
-    <!-- <app-header></app-header> -->
-
-    <!-- ========= sidebar ========= -->
+<mat-sidenav-container class="admin-shell">
+  <mat-sidenav
+    #drawer
+    [mode]="isMobile ? 'over' : 'side'"
+    [opened]="!isMobile"
+    class="admin-sidenav"
+  >
     <app-sidebar></app-sidebar>
+  </mat-sidenav>
 
-    <!-- ========= main ========= -->
-    <div id="main">
-        <router-outlet></router-outlet>
-    </div>
-</div>
-<!-- ========= footer ========= -->
-<!-- <app-footer></app-footer> -->
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button
+        *ngIf="isMobile"
+        mat-icon-button
+        type="button"
+        aria-label="Mở menu"
+        (click)="toggleSidenav()"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>LacViet Admin</span>
+    </mat-toolbar>
+    <main class="admin-content">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

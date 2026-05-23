@@ -1,33 +1,36 @@
-// src/app/services/notification.service.ts
 import { Injectable } from '@angular/core';
-import Swal from 'sweetalert2';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotificationService {
-  
-  success(message: string) {
-    Swal.fire(
-      'Thành công!',
-      message,
-      'success'
-    );
+  constructor(private snackBar: MatSnackBar) {}
+
+  success(message: string): void {
+    this.snackBar.open(message, 'Đóng', {
+      duration: 3000,
+      panelClass: ['snackbar-success'],
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+    });
   }
 
-  error(message: string) {
-    Swal.fire(
-      'Lỗi!',
-      message,
-      'error'
-    );
-  }
-  warning(message: string) {
-    Swal.fire(
-      'Lỗi!',
-      message,
-      'warning'
-    );
+  error(message: string): void {
+    this.snackBar.open(message, 'Đóng', {
+      duration: 4000,
+      panelClass: ['snackbar-error'],
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+    });
   }
 
+  warning(message: string): void {
+    this.snackBar.open(message, 'Đóng', {
+      duration: 3500,
+      panelClass: ['snackbar-warning'],
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+    });
+  }
 }

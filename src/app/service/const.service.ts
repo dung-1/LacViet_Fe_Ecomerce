@@ -8,29 +8,41 @@ export class ConstService {
   constructor(private http: HttpClient) { }
   public static serverHost(): string {
     // return isDevMode() ? 'http://192.168.1.20': '';
-        return isDevMode() ? 'http://192.168.1.20:7074': '';
+        return isDevMode() ? 'http://192.168.31.207:7074': '';
   }
 
   public static readonly FREQUENCY = {};
 
   /* Category */
   public static readonly getAllCategory = 'api/Category';
-  public static addCategory = 'api/Category';
-  public static updateCategory = 'api/Category/Update';
-  public static deleteCategory = 'api/Category/Delete';
+
+  public static readonly getCategoryById = (id: number) =>
+    `api/Category/${id}`;
+  
+  public static readonly addCategory = 'api/Category';
+  
+  public static readonly updateCategory = (id: number) =>
+    `api/Category/${id}`;
+  
+  public static readonly deleteCategory = (id: number) =>
+    `api/Category/${id}`;
 
   /* Product */
   public static readonly getAllProduct = 'api/Product';
-  public static readonly addProduct = 'api/Product';
-  public static readonly updateProduct = 'api/Product/Update';
-  public static readonly deleteProduct = 'api/Product/Delete';
+
+  public static readonly getProductById = (id: number) =>
+    `api/Product/${id}`;
   
-  /* Post */
-  public static readonly getAllPost = 'api/Post';
-  public static readonly addPost = 'api/Post';
-  public static readonly updatePost = 'api/Post/Update';
-  public static readonly updatePostID = 'api/Post';
+  public static readonly addProduct = 'api/Product';
+  
+  public static readonly updateProduct = (id: number) =>
+    `api/Product/${id}`;
+  
+  public static readonly deleteProduct = (id: number) =>
+    `api/Product/${id}`;
 
-  public static readonly deletePost = 'api/Post/Delete';
 
+  /* auth */
+  public static readonly getAuth= 'api/auth';
+ 
 }

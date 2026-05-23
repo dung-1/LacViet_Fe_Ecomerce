@@ -1,22 +1,12 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CategoryComponent } from './category.component';
-
+import { AppsharedModule } from '../../shared/app-shared.module';
 
 @NgModule({
   declarations: [CategoryComponent],
   exports: [CategoryComponent],
-
-  imports: [
-    CommonModule, 
-    HttpClientModule,
-    NgxDatatableModule,
-    FormsModule,
-    ReactiveFormsModule
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA], 
+  imports: [CommonModule, HttpClientModule, AppsharedModule],
 })
-export class CategoryModule { }
+export class CategoryModule {}

@@ -1,51 +1,121 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import Swal from 'sweetalert2';
-import { Category } from '../../../model/Category';
+import {
+  AfterViewInit,
+  Component,
+  Inject,
+  OnInit,
+  PLATFORM_ID,
+  ViewChild,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { Post } from '../../../model/Post';
 import { ApiService } from '../../../service/Api/api.service';
 import { NotificationService } from '../../../service/Notification/notification.service';
 import { ConstService } from '../../../service/const.service';
-import { Router } from '@angular/router';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogData,
+} from '../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
-  styleUrl: './post.component.css'
+  styleUrl: './post.component.css',
 })
-export class PostComponent implements OnInit {
+export class PostComponent implements OnInit, AfterViewInit {
+  displayedColumns = [
+    'id',
+    'title',
+    'fromDate',
+    'toDate',
+    'excerptImage',
+    'categoryId',
+    'actions',
+  ];
+  dataSource = new MatTableDataSource<Post>([]);
+  categories: { id: number; name: string }[] = [];
+  categoryIds: number[] = [];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   constructor(
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object,
     private apiService: ApiService,
     private notificationService: NotificationService,
-    private fb: FormBuilder
-  ) {
+    private dialog: MatDialog
+  ) {}
 
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.dataSource.filterPredicate = (data, filter) => {
+        const term = filter.trim().toLowerCase();
+        return data.title.toLowerCase().includes(term);
+      };
+      this.loadCategories();
+      this.loadPosts();
+    }
   }
-  categoryIds: number[] = [];
-  currentPostImage: string | null = null;
-  addPostForm!: FormGroup;
-  selectedFile!: File | null;
-  offset = 0;
-  filteredPost: Post[] = [];
-  Post: Post[] = [
-    { id: 1, title: '', content: '', excerptImage: '', categoryId: 1 },
-  ];
-  categories = [{ id: 1, name: 'Category 1' }];
-  editMode = false;
-  currentPostId: number | null = null;
-  editPostForm: FormGroup;
 
-  AllPost: Post[] = [];
-  totalItems: Post[] = [];
-
-  filteredCategories: Category[] = [];
-
-  onPage(event: any) {
-    this.offset = event.offset;
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
+
+  loadCategories(): void {
+    this.apiService.get(`${ConstService.getAllCategory}`).subscribe({
+      next: (data) => {
+        const parentCategory = data.find(
+          (category: { name: string }) => category.name === 'Tin tức'
+        );
+        if (parentCategory) {
+          this.categories = data.filter(
+            (category: { parentCategoryId: number }) =>
+              category.parentCategoryId === parentCategory.id
+          );
+          this.categoryIds = this.categories.map(
+            (category: { id: number }) => category.id
+          );
+        } else {
+          this.categories = [];
+          this.categoryIds = [];
+        }
+      },
+      error: () => {
+        this.notificationService.error('Có lỗi khi tải danh mục tin tức.');
+      },
+    });
+  }
+
+  loadPosts(): void {
+    this.apiService.get(`${ConstService.getAllPost}`).subscribe({
+      next: (data: Post[]) => {
+        const filtered = data
+          .filter((post) => this.categoryIds.includes(post.categoryId))
+          .sort((a, b) => {
+            const dateA = a.modifiedTime
+              ? new Date(a.modifiedTime).getTime()
+              : 0;
+            const dateB = b.modifiedTime
+              ? new Date(b.modifiedTime).getTime()
+              : 0;
+            return dateB - dateA;
+          });
+        this.dataSource.data = filtered;
+      },
+      error: () => {
+        this.notificationService.error('Có lỗi khi tải tin tức.');
+      },
+    });
+  }
+
+  applyFilter(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+  }
+
   getFullImageUrl(imageUrl: string): string {
     if (!imageUrl) return '';
     return `${ConstService.serverHost()}/${imageUrl}`;
@@ -56,90 +126,33 @@ export class PostComponent implements OnInit {
     return category ? category.name : 'Unknown';
   }
 
-  onFileChange(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.selectedFile = file;
-      this.addPostForm.patchValue({ image: file.name });
-      this.editPostForm.patchValue({ image: file.name });
-    } else {
-      this.selectedFile = null;
-    }
-  }
-
-  ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.loadCategories();
-      this.loadPosts();
-    }
-  } 
-  loadCategories(): void {
-    this.apiService.get(`${ConstService.getAllCategory}`).subscribe(
-      (data) => {
-        const parentCategory = data.find((category: { name: string; }) => category.name === 'Tin tức');
-        if (parentCategory) {
-          this.categories = data.filter((category: { parentCategoryId: number; }) => category.parentCategoryId === parentCategory.id);
-          this.categoryIds = this.categories.map((category: { id: number }) => category.id);
-        } else {
-          this.categories = [];
-          this.categoryIds = [];
+  deletePost(postId: number): void {
+    const dialogData: ConfirmDialogData = {
+      title: 'Xác nhận xóa',
+      message: 'Bạn có chắc chắn muốn xóa bài viết này?',
+      confirmText: 'Xóa',
+      cancelText: 'Hủy',
+    };
+    this.dialog
+      .open(ConfirmDialogComponent, { width: '400px', data: dialogData })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.apiService
+            .delete(`${ConstService.deletePost}/${postId}`)
+            .subscribe({
+              next: () => {
+                this.notificationService.success('Xóa tin tức thành công.');
+                this.loadPosts();
+              },
+              error: () => {
+                this.notificationService.error('Không thể xóa tin tức.');
+              },
+            });
         }
-      },
-      (error) => {
-        console.error('Error loading categories', error);
-      }
-    );
-  }
-  
-  loadPosts() {
-    this.apiService.get(`${ConstService.getAllPost}`).subscribe(
-      (data: Post[]) => {
-        this.AllPost = data.filter((Post: { categoryId: number }) => 
-          this.categoryIds.includes(Post.categoryId)
-        );
-        this.AllPost.sort((a, b) => {
-          const dateA = a.modifiedTime ? new Date(a.modifiedTime).getTime() : 0;
-          const dateB = b.modifiedTime ? new Date(b.modifiedTime).getTime() : 0;
-          return dateB - dateA;
-        });
-        this.totalItems = this.AllPost;
-        this.filteredPost = this.AllPost.slice(this.offset, this.offset + 5);
-      },      (error) => {
-        console.error('Error fetching Post:', error);
-      }
-    );
+      });
   }
 
-  deletePost(PostId: number) {
-    Swal.fire({
-      title: 'Bạn có chắc chắn muốn xóa?',
-      text: 'Bạn sẽ không thể khôi phục lại dữ liệu này!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Vâng, xóa nó!',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.apiService
-          .delete(`${ConstService.deletePost}/${PostId}`)
-          .subscribe(
-            (response) => {
-              this.notificationService.success('Xóa sản phẩm thành công.');
-              this.loadPosts();
-            },
-            (error) => {
-              this.notificationService.error('Không thể xóa sản phẩm.');
-            }
-          );
-      }
-    });
-  }
-
-  navigateTo(path: string) {
-    this.router.navigate([path]);
-    // window.location.reload();
-  }
   editPost(postId: number): void {
     this.router.navigate(['/post/edit', postId]);
   }

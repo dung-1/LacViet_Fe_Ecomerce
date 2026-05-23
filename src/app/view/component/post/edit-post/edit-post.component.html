@@ -1,92 +1,86 @@
-<div>
-    <div class="page-title">
-        <div class="row">
-            <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Chỉnh sửa bài viết</h3>
-            </div>
-        </div>
-    </div>
-    <form id="form-element" method="post" (ngSubmit)="updatePost()">
-        <ejs-tab cssClass="tab_content e-fill" headerPlacement="Top" overflowMode="Popup">
-            <div class="e-tab-header">
-                <div>Thông tin bài viết</div>
-                <div>Thông tin chi tiết</div>
+<div class="page-header">
+  <h1 class="page-title">Chỉnh sửa bài viết</h1>
+  <button mat-stroked-button type="button" routerLink="/post">
+    <mat-icon>arrow_back</mat-icon>
+    Quay lại danh sách
+  </button>
+</div>
+
+<mat-card>
+  <mat-card-content>
+    <form (ngSubmit)="updatePost()">
+      <mat-tab-group>
+        <mat-tab label="Thông tin bài viết">
+          <div class="post-form-section">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Tiêu đề bài viết</mat-label>
+              <input matInput [(ngModel)]="post.title" name="title" required />
+            </mat-form-field>
+
+            <h4>Nội dung bài viết</h4>
+            <ejs-richtexteditor
+              height="400px"
+              cssClass="e-outline"
+              [(ngModel)]="post.content"
+              name="content"
+              required
+            ></ejs-richtexteditor>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Thông tin chi tiết">
+          <div class="post-form-section">
+            <div class="post-form-grid">
+              <div>
+                <h4>Thể loại bài viết</h4>
+                <ejs-combobox
+                  [(ngModel)]="post.categoryId"
+                  [ngModelOptions]="{ standalone: true }"
+                  [dataSource]="vegetableData"
+                  [placeholder]="groupWaterMark"
+                  [fields]="groupFields"
+                  [popupHeight]="height"
+                ></ejs-combobox>
+              </div>
+              <div>
+                <h4>Hình ảnh bài viết</h4>
+                <ejs-uploader
+                  #defaultupload
+                  [asyncSettings]="path"
+                  [autoUpload]="false"
+                  (selected)="onFileSelected($event)"
+                  [buttons]="{ browse: 'Chọn file' }"
+                ></ejs-uploader>
+                <button ejs-button type="button" (click)="uploadFile()">Upload</button>
+              </div>
             </div>
 
-            <div class="e-content">
-                <div>
-                    <div class="col-lg-12 control-section e-input-section">
-                        <div class="content-wrapper">
-                            <div class="row material">
-                                <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 mt-3 "><b>Tiêu đề bài viết</b></div>
-                            </div>
-                            <div class="row material">
-                                <div class="col-xs-12 col-sm-12 col-lg-12 col-md-12 mt-2">
-                                    <ejs-textbox placeholder="Tiêu đề bài viết" cssClass="e-outline"
-                                        floatLabelType="Auto" [(ngModel)]="post.title" name="title"
-                                        required></ejs-textbox>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 mt-3"><b>Nội dung bài viết</b></div>
-                            </div>
-                            <div class="row">
-                                <ejs-richtexteditor height="500px" cssClass="e-outline" class="mt-2"
-                                    floatLabelType="Auto" [(ngModel)]="post.content" name="content"
-                                    required></ejs-richtexteditor>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-12 control-section e-input-section">
-                    <div class="content-wrapper">
-                        <div class="row material">
-                            <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 mt-3"><b>Thể loại bài viết</b></div>
-                            <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 mt-3"><b>Hình ảnh bài viết</b></div>
-                        </div>
-                        <div class="row material">
-                            <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 mt-2">
-                                <ejs-combobox id='vegetables' [(ngModel)]="post.categoryId" 
-                                [ngModelOptions]="{standalone: true}" 
-                                [dataSource]='vegetableData' [placeholder]='groupWaterMark' 
-                                [fields]='groupFields' [popupHeight]='height'></ejs-combobox>
-                            
-                              </div>
-                              <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 mt-2">
-                                <ejs-uploader #defaultupload 
-                                  [asyncSettings]='path' 
-                                  [autoUpload]='false'
-                                  (selected)="onFileSelected($event)"
-                                  [buttons]="{ browse: 'Chọn file' }">
-                                </ejs-uploader>
-                                <button ejs-button (click)="uploadFile()">Upload</button>
-                              </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 mt-3"><b>Ngày bắt đầu</b></div>
-                            <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 mt-3"><b>Ngày kết thúc</b></div>
-                        </div>
-                        <div class="row material">
-                            <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 mt-2">
-                                <ejs-datepicker class="e-input-fill" [(ngModel)]="post.fromDate"
-                                    name="fromDate"></ejs-datepicker>
-                            </div>
-                            <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 mt-2">
-                                <ejs-datepicker class="e-input-fill" [(ngModel)]="post.toDate"
-                                    name="toDate"></ejs-datepicker>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="post-form-grid">
+              <div>
+                <h4>Ngày bắt đầu</h4>
+                <ejs-datepicker
+                  class="e-input-fill"
+                  [(ngModel)]="post.fromDate"
+                  name="fromDate"
+                ></ejs-datepicker>
+              </div>
+              <div>
+                <h4>Ngày kết thúc</h4>
+                <ejs-datepicker
+                  class="e-input-fill"
+                  [(ngModel)]="post.toDate"
+                  name="toDate"
+                ></ejs-datepicker>
+              </div>
             </div>
-            <div className="row">
-                <div style="float: right;margin: 5px;">
-                    <button ejs-button className="btn" cssClass="e-custom-submit" type="submit">Submit</button>
-                </div>
-                <div style="float: right; margin: 5px;">
-                    <button ejs-button className="btn" cssClass="e-custom-reset" type="reset">Reset</button>
-                </div>
-            </div>
-        </ejs-tab>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+
+      <div class="post-form-actions">
+        <button mat-stroked-button type="button" routerLink="/post">Hủy</button>
+        <button mat-flat-button color="primary" type="submit">Cập nhật</button>
+      </div>
     </form>
-</div>
+  </mat-card-content>
+</mat-card>

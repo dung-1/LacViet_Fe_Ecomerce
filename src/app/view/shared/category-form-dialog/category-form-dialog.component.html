@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+    <input *ngIf="data.mode === 'edit'" type="hidden" formControlName="id" />
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tên thể loại</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="onCancel()">Hủy</button>
+  <button
+    mat-flat-button
+    color="primary"
+    type="button"
+    [disabled]="form.invalid"
+    (click)="onSave()"
+  >
+    Lưu
+  </button>
+</mat-dialog-actions>

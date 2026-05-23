@@ -1,88 +1,100 @@
-<div class="page-heading">
-  <div class="page-title">
-    <div class="row">
-      <div class="col-12 col-md-6 order-md-1 order-last">
-        <h3>Quản lý Tin tức</h3>
-      </div>
-    </div>
-  </div>
-
-
-  <a (click)="navigateTo('/post/create')" class="btn btn-secondary m-3">
-    <i class="bi bi-plus"></i>
-    <span>Thêm tin tức</span>
-  </a>
-
-  <!-- Hoverable rows start -->
-  <section class="section">
-    <div class="row" id="table-hover-row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-content">
-            <div class="card-body">
-              <div class="row mb-3 search-input"></div>
-              <ngx-datatable class="material" [rows]="filteredPost" [columnMode]="'force'" [headerHeight]="50"
-                [footerHeight]="50" [rowHeight]="'auto'" [limit]="5" [count]="totalItems.length" [offset]="offset"
-                (page)="onPage($event)"> 
-                
-                <ngx-datatable-column name="ID Tin tức">
-                  <ng-template let-row="row" ngx-datatable-cell-template>
-                    {{ row.id }}
-                  </ng-template>
-                </ngx-datatable-column>
-
-                <ngx-datatable-column name="Tên Tin tức ">
-                  <ng-template let-row="row" ngx-datatable-cell-template>
-                    {{ row.title }}
-                  </ng-template>
-                </ngx-datatable-column>
-
-                <ngx-datatable-column name="Từ Ngày ">
-                  <ng-template let-row="row" ngx-datatable-cell-template>
-                    {{ row.fromDate |date:'dd/MM/yyyy' }}
-                  </ng-template>
-                </ngx-datatable-column>
-
-                <ngx-datatable-column name="Đến Ngày ">
-                  <ng-template let-row="row" ngx-datatable-cell-template>
-                    {{ row.toDate | date:'dd/MM/yyyy' }}
-                  </ng-template>
-
-                </ngx-datatable-column>
-                <ngx-datatable-column name="ảnh Tin tức ">
-                  <ng-template let-row="row" ngx-datatable-cell-template>
-                    <img [src]="getFullImageUrl(row.excerptImage)" alt="{{ row.title }}"
-                      style="width: 100px; height: auto" />
-                  </ng-template>
-                </ngx-datatable-column>
-
-                <ngx-datatable-column name="Loại Tin tức ">
-                  <ng-template let-row="row" ngx-datatable-cell-template>
-                    {{ getCategoryName(row.categoryId) }}
-                  </ng-template>
-                </ngx-datatable-column>
-
-                <ngx-datatable-column name="Chỉnh sửa">
-                  <ng-template ngx-datatable-cell-template let-row="row">
-                    <button class="btn btn-primary" (click)="editPost(row.id)">
-                      <i class="bi bi-pencil-square"></i> Sửa
-                    </button>
-                  </ng-template>
-                </ngx-datatable-column>
-
-                <ngx-datatable-column name="Xóa">
-                  <ng-template ngx-datatable-cell-template let-row="row">
-                    <button class="btn btn-danger" (click)="deletePost(row.id)">
-                      <ion-icon name="trash-bin-outline"></ion-icon> Xóa
-                    </button>
-                  </ng-template>
-                </ngx-datatable-column>
-
-              </ngx-datatable>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+<div class="page-header">
+  <h1 class="page-title">Quản lý tin tức</h1>
+  <button mat-raised-button color="primary" routerLink="/post/create">
+    <mat-icon>add</mat-icon>
+    Thêm tin tức
+  </button>
 </div>
+
+<mat-card class="table-card">
+  <mat-card-content>
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Tìm kiếm</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Tiêu đề..." />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <table mat-table [dataSource]="dataSource" class="full-width">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Tiêu đề</th>
+        <td mat-cell *matCellDef="let row">{{ row.title }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fromDate">
+        <th mat-header-cell *matHeaderCellDef>Từ ngày</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.fromDate | date : 'dd/MM/yyyy' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="toDate">
+        <th mat-header-cell *matHeaderCellDef>Đến ngày</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.toDate | date : 'dd/MM/yyyy' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="excerptImage">
+        <th mat-header-cell *matHeaderCellDef>Ảnh</th>
+        <td mat-cell *matCellDef="let row">
+          <img
+            *ngIf="row.excerptImage"
+            [src]="getFullImageUrl(row.excerptImage)"
+            [alt]="row.title"
+            class="thumb-image"
+          />
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="categoryId">
+        <th mat-header-cell *matHeaderCellDef>Loại</th>
+        <td mat-cell *matCellDef="let row">
+          {{ getCategoryName(row.categoryId) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Thao tác</th>
+        <td mat-cell *matCellDef="let row">
+          <button
+            mat-icon-button
+            color="primary"
+            type="button"
+            matTooltip="Sửa"
+            (click)="editPost(row.id)"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="warn"
+            type="button"
+            matTooltip="Xóa"
+            (click)="deletePost(row.id)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          Không có dữ liệu
+        </td>
+      </tr>
+    </table>
+
+    <mat-paginator
+      [pageSizeOptions]="[5, 10, 25]"
+      [pageSize]="10"
+      showFirstLastButtons
+    ></mat-paginator>
+  </mat-card-content>
+</mat-card>

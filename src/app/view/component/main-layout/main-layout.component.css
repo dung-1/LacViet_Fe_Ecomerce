@@ -1,0 +1,7 @@
+.admin-sidenav {
+  width: 260px;
+}
+
+mat-toolbar span {
+  margin-left: 8px;
+}
