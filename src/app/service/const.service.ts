@@ -7,8 +7,8 @@ import { Injectable, isDevMode } from '@angular/core';
 export class ConstService {
   constructor(private http: HttpClient) { }
   public static serverHost(): string {
-    // return isDevMode() ? 'http://192.168.1.20': '';
-        return isDevMode() ? 'http://192.168.31.207:7074': '';
+    return isDevMode() ? 'http://localhost:8080': '';
+        // return isDevMode() ? 'http://192.168.31.207:7074': '';
   }
 
   public static readonly FREQUENCY = {};
